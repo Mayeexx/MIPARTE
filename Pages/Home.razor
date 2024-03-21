@@ -1,0 +1,59 @@
+﻿@page "/"
+
+@using MIPARTE.Models
+@using MIPARTE.Services
+
+<h3>Agregar Nodo en Posición Específica</h3>
+
+<div class="form-group">
+    <label for="nodeValue">Valor del Nodo:</label>
+    <input id="nodeValue" @bind="@nodoValue" class="form-control" />
+</div>
+<div class="form-group">
+    <label for="position">Posición:</label>
+    <input id="position" @bind="@position" type="number" class="form-control" />
+</div>
+<button @onclick="AgregarNodo" class="btn btn-primary">Agregar Nodo</button>
+
+<br />
+
+@if (nodos.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Posición</th>
+                <th scope="col">Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var nodo in nodos)
+            {
+                <tr>
+                    <td>@nodo.Posicion</td>
+                    <td>@nodo.Valor</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Nodo> nodos = new List<Nodo>(); // Lista para almacenar los nodos
+    private string nodoValue; // Variable para almacenar el valor del nodo
+    private int position; // Variable para almacenar la posición del nodo
+
+    [Inject]
+    private NodoPosicion nodoPosicion { get; set; } // Servicio para manipular la lista de nodos
+
+    // Método para agregar un nodo en la posición especificada
+    private void AgregarNodo()
+    {
+        if (!string.IsNullOrWhiteSpace(nodoValue) && position >= 0 && position <= nodos.Count)
+        {
+            nodoPosicion.AgregarNodoEnPosicion(position, nodoValue); // Agrega el nodo usando el servicio
+            nodos = nodoPosicion.ObtenerNodos(); // Actualiza la lista de nodos
+        }
+    }
+}
+
